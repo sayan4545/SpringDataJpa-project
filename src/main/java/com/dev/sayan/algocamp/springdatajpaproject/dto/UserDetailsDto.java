@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsDto {
-    private int id;
     private String name;
     private Boolean isWorking;
 }

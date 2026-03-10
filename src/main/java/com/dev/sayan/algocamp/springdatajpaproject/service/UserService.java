@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface UserService {
     UserDetails saveUser(UserDetails userDetails);
     List<UserDetails> getAllUsers();
-
+    UserDetails putEmployee(Long id, UserDetails userdetails);
 }

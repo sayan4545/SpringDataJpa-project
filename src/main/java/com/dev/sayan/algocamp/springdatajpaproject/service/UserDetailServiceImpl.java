@@ -1,5 +1,6 @@
 package com.dev.sayan.algocamp.springdatajpaproject.service;
 
+import com.dev.sayan.algocamp.springdatajpaproject.advices.exceptions.ResourceNotFoundException;
 import com.dev.sayan.algocamp.springdatajpaproject.dto.UserDetailsDto;
 import com.dev.sayan.algocamp.springdatajpaproject.entities.UserDetails;
 import com.dev.sayan.algocamp.springdatajpaproject.repositories.UserDetailsRepository;
@@ -44,14 +45,14 @@ public class UserDetailServiceImpl implements UserService{
 
                     userDetailsRepository.save(existingUser);
                     return modelMapper.map(existingUser,UserDetailsDto.class);
-                }).orElseThrow();
+                }).orElseThrow(()-> new ResourceNotFoundException("No user available with this id"+ id));
 
     }
 
     @Override
     public UserDetails updatePartialUser(Long id, Map<String, Object> updates) {
         UserDetails user = userDetailsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not present with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not present with id " + id));
 
         updates.forEach((fieldName, value) -> {
             Field field = org.springframework.util.ReflectionUtils.findField(UserDetails.class, fieldName);
@@ -65,10 +66,11 @@ public class UserDetailServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<UserDetails> findUserById(Long id) {
-        Boolean isExistById = userDetailsRepository.existsById(id);
-        if(!isExistById) throw new RuntimeException("User donot exist ");
-        return userDetailsRepository.findById(id);
+    public UserDetailsDto findUserById(Long id) {
+        //Boolean isExistById = userDetailsRepository.existsById(id);
+        UserDetails user = userDetailsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("resource not found"));
+        UserDetailsDto ud = modelMapper.map(user, UserDetailsDto.class);
+        return ud;
     }
 
     @Override

@@ -1,9 +1,7 @@
 package com.dev.sayan.algocamp.springdatajpaproject.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -22,6 +20,11 @@ public class UserDetails {
     private String name;
     private String emailId;
     private LocalDate doj;
+    private int age;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    @JsonProperty("isWorking")
     private Boolean isWorking;
+
 
 }

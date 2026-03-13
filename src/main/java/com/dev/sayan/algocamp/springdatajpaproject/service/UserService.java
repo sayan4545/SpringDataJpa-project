@@ -14,7 +14,7 @@ public interface UserService {
 
     UserDetails updatePartialUser(Long id, Map<String,Object> updates);
 
-    Optional<UserDetails> findUserById(Long id);
+    UserDetailsDto findUserById(Long id);
 
     Boolean deleteUserById(Long id);
 }

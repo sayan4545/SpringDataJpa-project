@@ -1,10 +1,12 @@
 package com.dev.sayan.algocamp.springdatajpaproject.advices;
-
 import com.dev.sayan.algocamp.springdatajpaproject.advices.exceptions.ResourceNotFoundException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,5 +27,19 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .build();
         return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleMethodValidationNotAcceptedError(MethodArgumentNotValidException exception){
+        List<String> errors = exception.getBindingResult().getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+        ApiError error = ApiError.builder()
+                .message("input validation failed")
+                .subErrors(errors)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .build();
+        return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
     }
 }

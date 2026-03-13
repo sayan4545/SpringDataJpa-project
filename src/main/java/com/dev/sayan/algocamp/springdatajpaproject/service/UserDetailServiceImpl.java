@@ -74,10 +74,12 @@ public class UserDetailServiceImpl implements UserService{
     }
 
     @Override
-    public Boolean deleteUserById(Long id) {
-        Boolean isExistById = userDetailsRepository.existsById(id);
-        if(!isExistById) return false;
-        userDetailsRepository.deleteById(id);
-        return true;
+    public UserDetailsDto deleteUserById(Long id) {
+        //Boolean isExistById = userDetailsRepository.existsById(id);
+        //if(!userDetailsRepository.existsById(id)) throw new ResourceNotFoundException("resource not found with id : "+ id);
+        UserDetails user = userDetailsRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Resource not found with id : "+id));
+        UserDetailsDto userTobeReturnedAfterDeleting = modelMapper.map(user,UserDetailsDto.class);
+        userDetailsRepository.delete(user);
+        return userTobeReturnedAfterDeleting;
     }
 }

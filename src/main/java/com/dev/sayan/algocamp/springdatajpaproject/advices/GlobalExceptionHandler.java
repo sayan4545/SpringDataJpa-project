@@ -12,25 +12,30 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> HandleResourceNotFoundException(ResourceNotFoundException exception){
+    public ResponseEntity<ApiResponse<?>> HandleResourceNotFoundException(ResourceNotFoundException exception){
         ApiError error = ApiError.builder()
                 .httpStatus(HttpStatus.NOT_FOUND)
                 .message(exception.getMessage())
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+        return buildErrorResponseEntity(error);
+        //return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
 
     }
+    public ResponseEntity<ApiResponse<?>> buildErrorResponseEntity(ApiError error){
+        return new ResponseEntity<>(new ApiResponse<>(error),error.getHttpStatus());
+    }
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleInternalServerErrorException(Exception exception){
+    public ResponseEntity<ApiResponse<?>> handleInternalServerErrorException(Exception exception){
         ApiError error = ApiError.builder()
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message(exception.getMessage())
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponseEntity(error);
+        //return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleMethodValidationNotAcceptedError(MethodArgumentNotValidException exception){
+    public ResponseEntity<ApiResponse<?>> handleMethodValidationNotAcceptedError(MethodArgumentNotValidException exception){
         List<String> errors = exception.getBindingResult().getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -40,6 +45,7 @@ public class GlobalExceptionHandler {
                 .subErrors(errors)
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
+        return buildErrorResponseEntity(error);
+        //return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
     }
 }

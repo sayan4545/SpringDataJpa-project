@@ -6,6 +6,7 @@ import com.dev.sayan.algocamp.springdatajpaproject.repositories.UserDetailsRepos
 import com.dev.sayan.algocamp.springdatajpaproject.service.UserDetailServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final UserDetailServiceImpl userDetailService;
     private final UserDetailsRepository userDetailsRepository;
 
     @PostMapping(path ="/saveUser")
     public ResponseEntity<UserDetails> saveUser(@Valid  @RequestBody UserDetailsDto userDetailsDto){
+        log.info("User saved ");
         return ResponseEntity.ok(userDetailService.saveUser(userDetailsDto));
     }
     @GetMapping(path ="/getUsers")
@@ -42,10 +45,8 @@ public class UserController {
     }
     @GetMapping(path = "/getById/{id}")
     public ResponseEntity<UserDetailsDto> findUserById(@PathVariable Long id){
-        //if(userDetailService.findUserById(id)) throw new ResourceNotFoundException("Element Not found with this particular id");
-        //return ResponseEntity.ok(userDetailService.findUserById(id));
-        //return new ResponseEntity<>(userDetailService.findUserById(id),HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(userDetailService.findUserById(id),HttpStatusCode.valueOf(400));
+        log.info("User fetched with id {id}",id);
+        return new ResponseEntity<>(userDetailService.findUserById(id),HttpStatus.FOUND);
 
 
     }
